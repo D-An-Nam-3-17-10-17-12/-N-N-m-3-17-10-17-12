@@ -1,0 +1,53 @@
+# Bài 1 – Tìm đường ngắn nhất trong kho hàng
+
+## Giới thiệu giải pháp
+Chương trình giải quyết bài toán tìm đường ngắn nhất cho xe di chuyển trong kho hàng kích thước $R \times C$ với các đặc điểm:
+- **Thuật toán cốt lõi**: Sử dụng thuật toán **BFS (Breadth-First Search)** kết hợp lưu vết đường đi (`parent`) để tìm đường đi ngắn nhất giữa các cặp điểm[cite: 11, 12].
+- **Xử lý đa điểm**: Với bài toán đi qua $k$ điểm ($2 \le k \le 8$)[cite: 11], chương trình tính ma trận khoảng cách giữa các điểm và áp dụng thuật toán hoán vị (`std::next_permutation`) để tìm thứ tự ghé thăm tối ưu nhất với tổng số bước ít nhất.
+- **Kiểm tra tính hợp lệ (Validation)**: Kiểm tra kỹ lưỡng định dạng token, giới hạn biên của kho, vật cản (`#`), trả về `INVALID` hoặc `-1` theo đúng yêu cầu mà không làm dừng chương trình[cite: 11, 12].
+- **Định dạng Output**: Xuất chuẩn 2 phần gồm Phần 1 (số bước tối ưu / `-1` / `INVALID`) và Phần 2 (chi tiết tối đa 10 bước di chuyển đầu tiên kèm `...`)[cite: 11].
+
+---
+
+## Cấu trúc thư mục nộp bài
+MSSV_HO_TEN/
+└─ src/
+└─ BT1/
+├─ README.md        <- Hướng dẫn sử dụng này
+├─ solution.cpp     <- Mã nguồn chính của bài toán
+└─ tests/           <- Thư mục chứa các file test (ví dụ: test6.txt)
+---
+
+## Hướng dẫn biên dịch và chạy chương trình
+
+### 1. Biên dịch (Compile)
+Mở terminal/command line tại thư mục chứa file `solution.cpp` và biên dịch bằng trình biên dịch C++ (khuyên dùng chuẩn C++17 trở lên với tối ưu hóa `-O3`):
+```bash
+g++ -O3 -std=c++17 solution.cpp -o solution
+
+### 2. Chạy chương trình với file test
+Trên Windows (PowerShell):
+
+PowerShell
+Get-Content tests\test6.txt | .\solution.exe
+Trên Windows (Command Prompt - CMD):
+
+DOS
+solution.exe < tests\test6.txt
+Trên Linux / macOS:
+
+Bash
+./solution < tests/test6.txt
+---
+
+### Hướng dẫn sắp xếp thư mục nộp bài cuối cùng:
+1. Đổi tên file code của bạn thành `solution.cpp`.
+2. Tạo thư mục theo cấu trúc mẫu của giảng viên[cite: 4, 11]:
+   ```text
+   MSSV_HO_TEN/
+   ├── src/
+   │   └── BT1/
+   │       ├── solution.cpp
+   │       ├── README.md
+   │       └── tests/
+   │           └── test6.txt
