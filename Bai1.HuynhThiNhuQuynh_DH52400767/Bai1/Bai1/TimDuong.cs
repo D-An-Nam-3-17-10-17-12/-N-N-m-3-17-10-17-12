@@ -106,7 +106,7 @@ namespace Bai1
                 int ketThuc=diem[order[i]];
                 if (batDau == ketThuc)
                     continue;
-                BFS(batDau, ketThuc); //chay bfs rieng doan giua 2 diem de lay mang parent cho dung
+                BFS(batDau); //chay bfs rieng doan giua 2 diem de lay mang parent cho dung
                 int length = kcach[ketThuc];
                 if (length == -1) break;
                 int canLay = Math.Min(length, 10 - daIn);
@@ -215,7 +215,6 @@ namespace Bai1
         }
         static void Main()
         {
-            Console.Write("Nhap so hang va so cot (R C): ");
             string line = Console.ReadLine();
             if (string.IsNullOrWhiteSpace(line))
             {
@@ -224,7 +223,7 @@ namespace Bai1
             }
             string[] size = line.Split(new char[] { ' ', '\t' },StringSplitOptions.RemoveEmptyEntries);
 
-            if (size.Length != 2 ||!int.TryParse(size[0], out R) || !int.TryParse(size[1], out C) ||R <= 0 || C <= 0)
+            if (size.Length < 2 ||!int.TryParse(size[0], out R) || !int.TryParse(size[1], out C) ||R <= 0 || C <= 0)
             {
                 Console.WriteLine("Du lieu khong hop le! (Vi du: 5 6)");
                 return;
@@ -234,14 +233,18 @@ namespace Bai1
             for (int i = 0; i < R; i++)
             {
                 string row = Console.ReadLine();
-                while (string.IsNullOrEmpty(row)) //phong khi dong bi trong
-                    row = Console.ReadLine();
-                kho[i] = row.ToCharArray();
+                 while (row != null && string.IsNullOrEmpty(row)) //Phong khi dong bi trong
+                     row = Console.ReadLine();
+                 if (row == null) return;
+                kho[i] = row.Trim().PadRight(C,'#').ToCharArray();
             }
             kcach = new int[N];
             parent = new int[N];
             hangdoi = new int[N];
             string lineQ = Console.ReadLine();
+            while (lineQ != null && string.IsNullOrWhiteSpace(lineQ))
+                lineQ = Console.ReadLine();
+            if (lineQ == null) return;
             int Q;
             if (!int.TryParse(lineQ, out Q) || Q < 0)
             {
