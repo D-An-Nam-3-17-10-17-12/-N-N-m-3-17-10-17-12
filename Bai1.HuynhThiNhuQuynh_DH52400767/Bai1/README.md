@@ -16,7 +16,7 @@ Kho hàng là lưới R × C, ô `.` là lối đi, ô `#` là vật cản. Xe �
 - Phần 1: mỗi truy vấn một dòng là số bước ít nhất, hoặc `-1` (không đi hết được), hoặc `INVALID` (truy vấn sai).
 - Phần 2: mỗi truy vấn một dòng liệt kê ô xuất phát và tối đa 10 ô đầu tiên dạng `(dòng,cột)`, thêm `...` nếu dài hơn 10 bước. Truy vấn `-1` hoặc `INVALID` thì in `-`.
 5. Cấu trúc chương trình
-- Ngôn ngữ: C# (Visual Studio 2022)
+- Ngôn ngữ: C# 
 - BFS(): tìm khoảng cách ngắn nhất từ một điểm, lưu ô cha để truy vết.
 - TruyVan(): đọc và kiểm tra truy vấn.
 - Giai(): BFS + quy hoạch động bitmask, truy vết thứ tự ghé các điểm.
