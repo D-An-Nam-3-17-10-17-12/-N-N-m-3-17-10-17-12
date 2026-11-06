@@ -233,9 +233,9 @@ namespace Bai1
             for (int i = 0; i < R; i++)
             {
                 string row = Console.ReadLine();
-                 while (row != null && string.IsNullOrEmpty(row)) //Phong khi dong bi trong
-                     row = Console.ReadLine();
-                 if (row == null) return;
+                while (row != null && string.IsNullOrEmpty(row)) //Phong khi dong bi trong
+                    row = Console.ReadLine();
+                if (row == null) return;
                 kho[i] = row.Trim().PadRight(C,'#').ToCharArray();
             }
             kcach = new int[N];
