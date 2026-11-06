@@ -1,0 +1,10 @@
+C:\Users\ADMIN\OneDrive\Desktop\ÔN TẬP\Baitaptuan1\Baitaptuan1\bin\Debug\Baitaptuan1.exe.config
+C:\Users\ADMIN\OneDrive\Desktop\ÔN TẬP\Baitaptuan1\Baitaptuan1\bin\Debug\Baitaptuan1.exe
+C:\Users\ADMIN\OneDrive\Desktop\ÔN TẬP\Baitaptuan1\Baitaptuan1\bin\Debug\Baitaptuan1.pdb
+C:\Users\ADMIN\OneDrive\Desktop\ÔN TẬP\Baitaptuan1\Baitaptuan1\obj\Debug\Baitaptuan1.csproj.AssemblyReference.cache
+C:\Users\ADMIN\OneDrive\Desktop\ÔN TẬP\Baitaptuan1\Baitaptuan1\obj\Debug\Baitaptuan1.Form1.resources
+C:\Users\ADMIN\OneDrive\Desktop\ÔN TẬP\Baitaptuan1\Baitaptuan1\obj\Debug\Baitaptuan1.Properties.Resources.resources
+C:\Users\ADMIN\OneDrive\Desktop\ÔN TẬP\Baitaptuan1\Baitaptuan1\obj\Debug\Baitaptuan1.csproj.GenerateResource.cache
+C:\Users\ADMIN\OneDrive\Desktop\ÔN TẬP\Baitaptuan1\Baitaptuan1\obj\Debug\Baitaptuan1.csproj.CoreCompileInputs.cache
+C:\Users\ADMIN\OneDrive\Desktop\ÔN TẬP\Baitaptuan1\Baitaptuan1\obj\Debug\Baitaptuan1.exe
+C:\Users\ADMIN\OneDrive\Desktop\ÔN TẬP\Baitaptuan1\Baitaptuan1\obj\Debug\Baitaptuan1.pdb
