@@ -1,121 +1,67 @@
-# Tìm đường ngắn nhất cho xe trong kho hàng
+**Bài 1 – Tìm đường ngắn nhất trong kho hàng**
 
-Bài 1 của đồ án phần mềm quản lý kho, viết bằng **C++**. Chương trình tìm số bước ít nhất để một xe di chuyển trong kho, xuất phát từ một vị trí và đi qua một hoặc nhiều điểm lấy hàng, sử dụng **ma trận 2D** và thuật toán **BFS**.
+**1. Giới thiệu**
 
-## Bài toán
+Chương trình tìm số bước di chuyển ít nhất của xe trong bản đồ kho hàng, sử dụng thuật toán BFS và đệ quy để chọn thứ tự ghé các điểm cần đến sao cho tổng số bước là nhỏ nhất.
 
-- Kho là một lưới hình chữ nhật `R` hàng × `C` cột.
-- Ô `.` là lối đi, ô `#` là vật cản (tường, cột).
-- Xe đi theo 4 hướng (lên, xuống, trái, phải), mỗi bước sang một ô kề.
-- Mỗi truy vấn cho `k` điểm (2 ≤ k ≤ 8). Điểm đầu tiên là vị trí xe, các điểm còn lại là nơi cần đi qua (thứ tự tùy ý, không cần quay về điểm xuất phát). Cần tìm tổng số bước ít nhất.
+**2. Công nghệ sử dụng**
 
-## Ý tưởng giải
+\- Ngôn ngữ lập trình: C++
 
-1. **Lưu bản đồ:** dùng ma trận 2D `bandokho[r][c]`. Mỗi ô là một đỉnh của đồ thị, hai ô kề nhau (không phải `#`) là một cạnh.
-2. **Đường ngắn nhất giữa hai ô (BFS):** hàm `loang` lan ra từ ô xuất phát theo từng lớp bằng hàng đợi, ghi số bước vào ma trận `buoc[r][c]`. Ô không tới được giữ giá trị `-1`.
-3. **Khoảng cách giữa các điểm:** chạy BFS từ từng điểm trong truy vấn để lập bảng `khoangcach[i][j]`.
-4. **Đi qua nhiều điểm:** hàm `timhoanvi` dùng đệ quy thử mọi thứ tự ghé thăm các điểm (điểm xuất phát cố định), lấy tổng nhỏ nhất. Nếu có đoạn không đi được thì bỏ nhánh đó; không có thứ tự nào đi hết thì kết quả là `-1`.
+\- Môi trường chạy: Visual Studio
 
-### Độ phức tạp
+\- Thư viện:
 
-- BFS: O(R · C) cho mỗi lần chạy, chạy k lần cho mỗi truy vấn.
-- Thử thứ tự: tối đa (k − 1)! ≤ 5040 hoán vị khi k = 8.
+\#include \<iostream\> // Nhập, xuất dữ liệu
 
-## Cấu trúc dự án
+\#include \<string\> // Xử lý chuỗi ký tự
 
-| File | Vai trò |
-|---|---|
-| `thuvien.h` | Khai báo thư viện, biến toàn cục (`R`, `C`, `bandokho`, `buoc`, `hangdoi`) và nguyên mẫu các hàm |
-| `caidat.cpp` | Cài đặt các hàm: `kiemtratoado`, `kiemtralaso`, `them`, `loang`, `timhoanvi`, `timduongnhonhat` |
-| `chuongtrinh.cpp` | Hàm `main`: đọc dữ liệu, xử lý từng truy vấn và in kết quả |
+\#include \<queue\> // Hàng đợi, dùng cho BFS
 
-### Các hàm chính
+\#include \<algorithm\> // Các thuật toán chuẩn
 
-| Hàm | Chức năng |
-|---|---|
-| `kiemtratoado(r, c)` | Kiểm tra ô nằm trong kho và không phải vật cản |
-| `kiemtralaso(noidung)` | Kiểm tra một chuỗi chỉ gồm chữ số 0–9 |
-| `them(r, c, b)` | Nếu ô hợp lệ và chưa thăm thì ghi `b` bước và đưa vào hàng đợi |
-| `loang(r0, c0)` | BFS từ ô `(r0, c0)`, tính số bước đến mọi ô |
-| `timhoanvi(...)` | Đệ quy thử mọi thứ tự ghé thăm các điểm |
-| `timduongnhonhat(k, R[], C[])` | Trả về tổng số bước ít nhất của một truy vấn, hoặc `-1` |
+\#include \<climits\> // Giới hạn kiểu số nguyên
 
-## Biên dịch và chạy
+**3. Cách chạy chương trình**
 
-Mã nguồn dùng biến `inline` ở `thuvien.h`, nên cần chuẩn **C++17** trở lên.
+1\. Mở Visual Studio.
 
-**g++ (Linux / macOS / MinGW):**
+2\. Tạo hoặc mở dự án Console App bằng C++.
 
-```bash
-g++ -std=c++17 -O2 chuongtrinh.cpp caidat.cpp -o khohang
-./khohang < input.txt
-```
+3\. Thêm 3 file thuvien.h, caidat.cpp, chuongtrinh.cpp vào dự án.
 
-**Visual Studio:** thêm cả 3 file vào project, vào *Project → Properties → C/C++ → Language → C++ Language Standard* và chọn **ISO C++17**.
+4\. Chọn chuẩn C++17 trong Project Properties → C/C++ → Language → C++ Language Standard.
 
-> Nếu g++ báo thiếu `INT_MAX`, thêm `#include <climits>` (và `#include <string>`) vào đầu `thuvien.h`.
+5\. Nhấn Ctrl + F5 để chạy chương trình.
 
-## Định dạng dữ liệu
+6\. Nhập bản đồ và các truy vấn cho chương trình.
 
-**Input**
+**4. Định dạng dữ liệu đầu vào**
 
-```
-R C
-<R dòng bản đồ, mỗi dòng C ký tự '.' hoặc '#'>
-Q
-k r1 c1 r2 c2 ... rk ck      (lặp lại Q dòng)
-```
+\- Dòng đầu tiên gồm hai số R C, lần lượt là số hàng và số cột của bản đồ.
 
-Hàng và cột đánh số từ 0. Giới hạn: 1 ≤ R, C ≤ 1000; 1 ≤ Q ≤ 10; 2 ≤ k ≤ 8.
+\- Tiếp theo là "R" dòng mô tả bản đồ.
 
-**Output:** mỗi truy vấn in một dòng:
+\- Ký tự "." biểu thị ô có thể di chuyển.
 
-- Số bước ít nhất.
-- `-1` nếu không thể đi tới hết các điểm.
-- `INVALID` nếu k không thuộc [2, 8], tọa độ nằm ngoài kho hoặc rơi vào ô `#`.
+\- Ký tự "#" biểu thị ô bị chặn.
 
-## Ví dụ
+\- Tiếp theo là số lượng truy vấn "Q".
 
-Input:
+\- Mỗi truy vấn gồm số điểm "k", sau đó là "k" cặp tọa độ hàng và cột. Tọa độ được đánh số từ 0.
 
-```
-5 6
-......
-.##.#.
-.#....
-.#.###
-...#..
-7
-2 0 0 4 5
-2 0 0 0 0
-2 4 0 2 2
-3 0 0 4 0 0 5
-2 1 1 0 0
-2 0 0 5 0
-4 0 0 2 5 2 3 4 2
-```
+**5. Thuật toán**
 
-Output:
+\- BFS: Tính khoảng cách ngắn nhất giữa các điểm.
 
-```
--1
-0
-4
-13
-INVALID
-INVALID
-11
-```
+\- Đệ quy: Thử các thứ tự ghé các điểm để tìm tổng số bước nhỏ nhất.
 
-Giải thích:
+\- Kiểm tra dữ liệu đầu vào: Phát hiện k không hợp lệ, tọa độ nằm ngoài bản đồ hoặc trên vật cản.
 
-- Truy vấn 1: ô (4,5) bị vây kín bởi vật cản nên không tới được, kết quả `-1`.
-- Truy vấn 4: xe đi (0,0) → (4,0) → (0,5), tổng 4 + 9 = 13 bước.
-- Truy vấn 5: ô (1,1) là vật cản, nên `INVALID`.
-- Truy vấn 6: hàng 5 nằm ngoài kho (chỉ có hàng 0–4), nên `INVALID`.
+**6. Kết quả đầu ra**
 
-## Hướng phát triển
+\- In tổng số bước di chuyển ít nhất cho từng truy vấn.
 
-- Dùng `kiemtralaso` để kiểm tra từng giá trị nhập vào theo dòng (loại các giá trị như `-5`, `1e5`, `12abc`).
-- In thêm đường đi cụ thể của xe cho mỗi truy vấn.
-- Làm tiếp các bài còn lại của đồ án: nhập/xuất kho theo FIFO, xử lý đơn hàng theo mức ưu tiên, tra cứu danh bạ bằng B-Tree.
+\- In "-1" nếu không thể đi qua tất cả các điểm.
+
+\- In "INVALID" nếu truy vấn không hợp lệ theo quy định của đề bài.
