@@ -1,60 +1,34 @@
-#include "thuvien.h"
+#ifndef THUVIEN_H
+#define THUVIEN_H
 
-int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
+#include <iostream>
+#include <vector>
+#include <string>
+#include <queue>
+#include <algorithm>
+#include <sstream>
+#include <climits>
 
-    // Nhap kich thuoc kho
-    cin >> R >> C;
+using namespace std;
 
-    gridMap.resize(R);
+const int INF = 1000000000;
 
-    // Nhap ban do
-    for (int i = 0; i < R; i++) {
-        cin >> gridMap[i];
-    }
+extern int R, C;
+extern vector<string> gridMap;
 
-    // Nhap so truy van
-    int Q;
-    cin >> Q;
+bool valid(int x, int y);
 
-    string line;
-    getline(cin, line);
+vector<int> BFS(int start, vector<int>& parent);
 
-    vector<string> results;
-    vector<string> paths;
+vector<int> getPath(int start, int finish);
 
-    // Xu ly tung truy van
-    for (int i = 0; i < Q; i++) {
-        getline(cin, line);
+void solveQuery(
+    const vector<long long>& a,
+    string& answer,
+    string& pathAnswer
+);
 
-        stringstream ss(line);
+#endif
 
-        vector<long long> a;
-        long long value;
 
-        while (ss >> value) {
-            a.push_back(value);
-        }
-
-        string answer, pathAnswer;
-
-        solveQuery(a, answer, pathAnswer);
-
-        results.push_back(answer);
-        paths.push_back(pathAnswer);
-    }
-
-    // PHAN 1: So buoc it nhat
-    for (string s : results) {
-        cout << s << '\n';
-    }
-
-    // PHAN 2: Duong di
-    for (string s : paths) {
-        cout << s << '\n';
-    }
-
-    return 0;
-}
 
