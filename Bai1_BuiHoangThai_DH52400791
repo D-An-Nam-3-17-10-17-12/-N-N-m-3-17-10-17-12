@@ -1,1 +1,60 @@
+#include "thuvien.h"
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    // Nhap kich thuoc kho
+    cin >> R >> C;
+
+    gridMap.resize(R);
+
+    // Nhap ban do
+    for (int i = 0; i < R; i++) {
+        cin >> gridMap[i];
+    }
+
+    // Nhap so truy van
+    int Q;
+    cin >> Q;
+
+    string line;
+    getline(cin, line);
+
+    vector<string> results;
+    vector<string> paths;
+
+    // Xu ly tung truy van
+    for (int i = 0; i < Q; i++) {
+        getline(cin, line);
+
+        stringstream ss(line);
+
+        vector<long long> a;
+        long long value;
+
+        while (ss >> value) {
+            a.push_back(value);
+        }
+
+        string answer, pathAnswer;
+
+        solveQuery(a, answer, pathAnswer);
+
+        results.push_back(answer);
+        paths.push_back(pathAnswer);
+    }
+
+    // PHAN 1: So buoc it nhat
+    for (string s : results) {
+        cout << s << '\n';
+    }
+
+    // PHAN 2: Duong di
+    for (string s : paths) {
+        cout << s << '\n';
+    }
+
+    return 0;
+}
 
