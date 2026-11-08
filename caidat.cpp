@@ -1,0 +1,261 @@
+
+#include "thuvien.h"
+
+int R, C;
+vector<string> gridMap;
+
+int dx[] = { -1, 1, 0, 0 };
+int dy[] = { 0, 0, -1, 1 };
+
+// Kiem tra o hop le
+bool valid(int x, int y) {
+    return x >= 0 && x < R &&
+        y >= 0 && y < C &&
+        gridMap[x][y] == '.';
+}
+
+// Thuat toan BFS
+vector<int> BFS(int start, vector<int>& parent) {
+    int N = R * C;
+
+    vector<int> dist(N, -1);
+    parent.assign(N, -2);
+
+    queue<int> q;
+
+    dist[start] = 0;
+    parent[start] = -1;
+    q.push(start);
+
+    while (!q.empty()) {
+        int u = q.front();
+        q.pop();
+
+        int x = u / C;
+        int y = u % C;
+
+        for (int d = 0; d < 4; d++) {
+            int nx = x + dx[d];
+            int ny = y + dy[d];
+
+            if (!valid(nx, ny))
+                continue;
+
+            int v = nx * C + ny;
+
+            if (dist[v] != -1)
+                continue;
+
+            dist[v] = dist[u] + 1;
+            parent[v] = u;
+
+            q.push(v);
+        }
+    }
+
+    return dist;
+}
+
+// Lay duong di giua hai diem
+vector<int> getPath(int start, int finish) {
+    vector<int> parent;
+    vector<int> dist = BFS(start, parent);
+
+    if (dist[finish] == -1)
+        return {};
+
+    vector<int> path;
+    int cur = finish;
+
+    while (cur != -1) {
+        path.push_back(cur);
+        cur = parent[cur];
+    }
+
+    reverse(path.begin(), path.end());
+
+    return path;
+}
+
+// Xu ly truy van
+void solveQuery(
+    const vector<long long>& a,
+    string& answer,
+    string& pathAnswer
+) {
+    answer = "";
+    pathAnswer = "";
+
+    // Kiem tra so luong du lieu
+    if (a.empty()) {
+        answer = "INVALID";
+        pathAnswer = "-";
+        return;
+    }
+
+    long long k = a[0];
+
+    if (k < 2 || k > 8 || a.size() != 1 + 2 * k) {
+        answer = "INVALID";
+        pathAnswer = "-";
+        return;
+    }
+
+    vector<int> points;
+
+    // Kiem tra toa do
+    for (int i = 0; i < k; i++) {
+        long long x = a[1 + 2 * i];
+        long long y = a[2 + 2 * i];
+
+        if (x < 0 || x >= R || y < 0 || y >= C) {
+            answer = "INVALID";
+            pathAnswer = "-";
+            return;
+        }
+
+        if (gridMap[x][y] != '.') {
+            answer = "INVALID";
+            pathAnswer = "-";
+            return;
+        }
+
+        points.push_back((int)x * C + (int)y);
+    }
+
+    // Tinh khoang cach giua cac diem
+    int dist[8][8];
+
+    for (int i = 0; i < k; i++) {
+        vector<int> parent;
+        vector<int> d = BFS(points[i], parent);
+
+        for (int j = 0; j < k; j++) {
+            dist[i][j] = d[points[j]];
+        }
+    }
+
+    // DP Bitmask
+    int m = k - 1;
+    int FULL = (1 << m);
+
+    vector<vector<int>> dp(
+        FULL, vector<int>(m, INF)
+    );
+
+    vector<vector<int>> trace(
+        FULL, vector<int>(m, -1)
+    );
+
+    // Khoi tao
+    for (int i = 0; i < m; i++) {
+        if (dist[0][i + 1] != -1) {
+            dp[1 << i][i] = dist[0][i + 1];
+        }
+    }
+
+    // Chuyen trang thai DP
+    for (int mask = 1; mask < FULL; mask++) {
+        for (int last = 0; last < m; last++) {
+
+            if (!(mask & (1 << last)))
+                continue;
+
+            if (dp[mask][last] == INF)
+                continue;
+
+            for (int next = 0; next < m; next++) {
+
+                if (mask & (1 << next))
+                    continue;
+
+                int d = dist[last + 1][next + 1];
+
+                if (d == -1)
+                    continue;
+
+                int newMask = mask | (1 << next);
+
+                int newCost = dp[mask][last] + d;
+
+                if (newCost < dp[newMask][next]) {
+                    dp[newMask][next] = newCost;
+                    trace[newMask][next] = last;
+                }
+            }
+        }
+    }
+
+    // Tim ket qua nho nhat
+    int best = INF;
+    int last = -1;
+
+    for (int i = 0; i < m; i++) {
+        if (dp[FULL - 1][i] < best) {
+            best = dp[FULL - 1][i];
+            last = i;
+        }
+    }
+
+    if (best == INF) {
+        answer = "-1";
+        pathAnswer = "-";
+        return;
+    }
+
+    answer = to_string(best);
+
+    // Truy vet thu tu cac diem
+    vector<int> order;
+    int mask = FULL - 1;
+
+    while (last != -1) {
+        order.push_back(last + 1);
+
+        int previous = trace[mask][last];
+
+        mask ^= (1 << last);
+        last = previous;
+    }
+
+    reverse(order.begin(), order.end());
+
+    // Ghép cac doan duong di
+    vector<int> fullPath;
+
+    fullPath.push_back(points[0]);
+
+    int current = points[0];
+
+    for (int id : order) {
+        vector<int> segment =
+            getPath(current, points[id]);
+
+        for (int j = 1; j < (int)segment.size(); j++) {
+            fullPath.push_back(segment[j]);
+        }
+
+        current = points[id];
+    }
+
+    // In o xuat phat va toi da 10 buoc dau tien
+    stringstream ss;
+
+    int limit = min(11, (int)fullPath.size());
+
+    for (int i = 0; i < limit; i++) {
+        int x = fullPath[i] / C;
+        int y = fullPath[i] % C;
+
+        if (i > 0)
+            ss << " ";
+
+        ss << "(" << x << "," << y << ")";
+    }
+
+    if ((int)fullPath.size() > 11) {
+        ss << " ...";
+    }
+
+    pathAnswer = ss.str();
+}
