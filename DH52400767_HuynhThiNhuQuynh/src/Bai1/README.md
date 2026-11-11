@@ -1,5 +1,5 @@
 Bài 1 - Tìm đường ngắn nhất trong kho hàng
-- Sinh viên: Huỳnh Thị Như Quỳnh 
+- Họ và Tên : Huỳnh Thị Như Quỳnh 
 - MSSV : DH52400767
 1. Giới thiệu
 Kho hàng là lưới R × C, ô `.` là lối đi, ô `#` là vật cản. Xe đi lên, xuống, trái, phải sang ô kề.
