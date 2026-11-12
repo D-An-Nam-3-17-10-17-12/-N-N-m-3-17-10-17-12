@@ -11,7 +11,7 @@ Bài này yêu cầu tìm đường đi trong một kho hàng được biểu di
 
 Mỗi truy vấn có một điểm xuất phát và các điểm cần ghé qua. Xe được chọn thứ tự ghé các điểm sao cho tổng số bước ít nhất và không cần quay lại điểm xuất phát.
 
-## 2. Cách em làm
+## 2. Ý tưởng 
 
 Đầu tiên, em lưu bản đồ bằng `vector<string>`. Sau đó em dùng BFS để tìm khoảng cách từ một vị trí đến những ô khác. Em dùng BFS vì mỗi lần di chuyển đều có chi phí bằng 1 bước.
 
@@ -56,8 +56,7 @@ g++ -std=c++17 -O2 solution.cpp -o BT1.exe
 BT1.exe < tests/input1.txt
 ```
 
-## 6. Đầu vào
-
+## 6. Input
 1. Dòng đầu gồm hai số `R C`.
 2. `R` dòng tiếp theo là bản đồ, mỗi dòng có `C` ký tự `.` hoặc `#`.
 3. Dòng tiếp theo là số truy vấn `Q`.
@@ -69,7 +68,7 @@ k r1 c1 r2 c2 ... rk ck
 
 Trong đó `2 <= k <= 8`. Điểm đầu tiên là vị trí xuất phát của xe. Tọa độ hàng và cột được đánh số từ 0.
 
-## 7. Đầu ra
+## 7. Output
 
 Chương trình in ra hai phần:
 
