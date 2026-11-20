@@ -1,184 +1,141 @@
-// Bai 1 - Tim duong ngan nhat trong kho hang
-// Cau truc du lieu: luoi 2D (luu phang), BFS cho khoang cach, thu moi thu tu cho nhieu diem.
-#include <iostream>
-#include <vector>
-#include <string>
-#include <sstream>
-#include <numeric>
-#include <algorithm>
-
+#include <bits/stdc++.h>
 using namespace std;
 
-static int R, C;
-static vector<string> grid;
-static const int DR[4] = { -1, 1, 0, 0 };
-static const int DC[4] = { 0, 0, -1, 1 };
+static const long long MAX_QTY = 1000000000LL;
+static const size_t MAX_LEN = 20;
 
-static string readLine() {
-    string s;
-    getline(cin, s);
-    while (!s.empty() && (s.back() == '\r' || s.back() == '\n')) s.pop_back();
-    return s;
-}
-
-static bool isDigits(const string& s) {
+static bool parseNonNegativeInt(const string& s, long long& value) {
     if (s.empty()) return false;
-    for (char ch : s)
+    long long x = 0;
+    for (char ch : s) {
         if (ch < '0' || ch > '9') return false;
+        x = x * 10 + (ch - '0');
+        if (x > INT_MAX) return false;
+    }
+    value = x;
     return true;
 }
 
-// BFS tu o src, tra ve mang khoang cach (-1 neu khong toi duoc)
-static vector<int> bfs(int src) {
-    vector<int> dist(R * C, -1);
-    vector<int> q;
-    q.reserve(R * C);
-    dist[src] = 0;
-    q.push_back(src);
-    for (size_t head = 0; head < q.size(); head++) {
-        int cur = q[head];
-        int r = cur / C, c = cur % C;
-        for (int d = 0; d < 4; d++) {
-            int nr = r + DR[d], nc = c + DC[d];
-            if (nr < 0 || nr >= R || nc < 0 || nc >= C) continue;
-            if (grid[nr][nc] == '#') continue;
-            int nxt = nr * C + nc;
-            if (dist[nxt] != -1) continue;
-            dist[nxt] = dist[cur] + 1;
-            q.push_back(nxt);
-        }
-    }
-    return dist;
+static bool parseQty(const string& s, long long& qty) {
+    return parseNonNegativeInt(s, qty) && qty >= 1 && qty <= MAX_QTY;
 }
 
-// Phan tich 1 truy van. Hop le -> tra ve true va dien pts (id o = r*C + c)
-static bool parseQuery(const string& line, vector<int>& pts) {
-    istringstream iss(line);
-    vector<string> tok;
-    string t;
-    while (iss >> t) tok.push_back(t);
-    if (tok.empty()) return false;
-    if (!isDigits(tok[0]) || tok[0].size() > 2) return false;
-    int k = stoi(tok[0]);
-    if (k < 2 || k > 8) return false;
-    if ((int)tok.size() != 1 + 2 * k) return false;
-    pts.clear();
-    for (int i = 0; i < k; i++) {
-        const string& a = tok[1 + 2 * i];
-        const string& b = tok[2 + 2 * i];
-        if (!isDigits(a) || !isDigits(b)) return false;
-        if (a.size() > 7 || b.size() > 7) return false;  // chac chan ngoai kho
-        int r = stoi(a), c = stoi(b);
-        if (r >= R || c >= C) return false;
-        if (grid[r][c] == '#') return false;
-        pts.push_back(r * C + c);
-    }
-    return true;
-}
+struct Lot {
+    string id;
+    long long qty;
+};
 
-// Cac o (toi da 11) cua duong di tu o s den o t, dung mang dist tinh tu t
-static void walk(int s, int t, const vector<int>& distT, vector<int>& path, size_t limit) {
-    int cur = s;
-    while (cur != t && path.size() < limit) {
-        int r = cur / C, c = cur % C;
-        for (int d = 0; d < 4; d++) {
-            int nr = r + DR[d], nc = c + DC[d];
-            if (nr < 0 || nr >= R || nc < 0 || nc >= C) continue;
-            int nxt = nr * C + nc;
-            if (distT[nxt] != -1 && distT[nxt] == distT[cur] - 1) {
-                cur = nxt;
-                path.push_back(cur);
-                break;
-            }
-        }
-    }
-}
+struct SkuInfo {
+    queue<Lot> lots;
+    long long total = 0;
+};
 
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
 
-    {
-        istringstream iss(readLine());
-        iss >> R >> C;
-    }
-    grid.assign(R, string(C, '#'));
-    for (int i = 0; i < R; i++) {
-        string s = readLine();
-        for (int j = 0; j < C && j < (int)s.size(); j++) grid[i][j] = s[j];
-    }
-    string ql = readLine();
-    while (ql.empty() && cin) ql = readLine();
-    int Q = stoi(ql);
+    string line;
 
-    vector<string> part1(Q), part2(Q);
+    long long Q = 0;
+    bool gotQ = false;
+    while (getline(cin, line)) {
+        if (!line.empty() && line.back() == '\r') line.pop_back();
+        if (line.empty()) continue;
+        gotQ = true;
+        break;
+    }
+    if (!gotQ) return 0;
+    if (!parseNonNegativeInt(line, Q) || Q < 1 || Q > 100000) return 0;
 
-    for (int qi = 0; qi < Q; qi++) {
-        string line = readLine();
-        vector<int> pts;
-        if (!parseQuery(line, pts)) {
-            part1[qi] = "INVALID";
-            part2[qi] = "-";
+    unordered_map<string, SkuInfo> warehouse;
+    unordered_set<string> usedLots;
+    warehouse.reserve(1 << 17);
+    usedLots.reserve(1 << 17);
+
+    vector<string> answers;
+    answers.reserve(Q);
+
+    for (long long qi = 0; qi < Q; ++qi) {
+        if (!getline(cin, line)) line.clear();
+        if (!line.empty() && line.back() == '\r') line.pop_back();
+
+        stringstream ss(line);
+        vector<string> tokens;
+        string token;
+        while (ss >> token) tokens.push_back(token);
+
+        if (tokens.empty()) {
+            answers.push_back("INVALID");
             continue;
         }
-        int k = pts.size();
 
-        // BFS tu moi diem, luu lai de tinh khoang cach tung cap va dung lai de dung duong di
-        vector<vector<int>> dist(k);
-        for (int i = 0; i < k; i++) dist[i] = bfs(pts[i]);
+        const string& cmd = tokens[0];
 
-        // d[i][j] = khoang cach giua diem i va diem j
-        vector<vector<long long>> d(k, vector<long long>(k, -1));
-        for (int i = 0; i < k; i++)
-            for (int j = 0; j < k; j++) d[i][j] = dist[i][pts[j]];
-
-        // Thu moi thu tu tham cac diem 1..k-1 (diem 0 la xuat phat)
-        vector<int> order(k - 1);
-        iota(order.begin(), order.end(), 1);
-        long long best = -1;
-        vector<int> bestOrder;
-        do {
-            long long total = 0;
-            int prev = 0;
-            bool ok = true;
-            for (int x : order) {
-                if (d[prev][x] < 0) { ok = false; break; }
-                total += d[prev][x];
-                prev = x;
+        if (cmd == "IMPORT") {
+            long long qty;
+            if (tokens.size() != 4 ||
+                tokens[1].size() > MAX_LEN || tokens[2].size() > MAX_LEN ||
+                !parseQty(tokens[3], qty)) {
+                answers.push_back("INVALID");
+                continue;
             }
-            if (ok && (best < 0 || total < best)) {
-                best = total;
-                bestOrder = order;
+            const string& sku = tokens[1];
+            const string& lot = tokens[2];
+
+            if (usedLots.count(lot)) {
+                answers.push_back("DUPLICATE_LOT");
+                continue;
             }
-        } while (next_permutation(order.begin(), order.end()));
+            usedLots.insert(lot);
+            SkuInfo& info = warehouse[sku];
+            info.lots.push({lot, qty});
+            info.total += qty;
+            answers.push_back("OK");
 
-        if (best < 0) {
-            part1[qi] = "-1";
-            part2[qi] = "-";
-            continue;
-        }
-        part1[qi] = to_string(best);
+        } else if (cmd == "EXPORT") {
+            long long qty;
+            if (tokens.size() != 3 || tokens[1].size() > MAX_LEN ||
+                !parseQty(tokens[2], qty)) {
+                answers.push_back("INVALID");
+                continue;
+            }
+            auto it = warehouse.find(tokens[1]);
+            long long stock = (it == warehouse.end()) ? 0 : it->second.total;
 
-        // Dung duong di: o xuat phat + toi da 10 o dau
-        vector<int> path = { pts[0] };
-        int prev = 0;
-        for (int x : bestOrder) {
-            if (path.size() >= 11) break;
-            walk(pts[prev], pts[x], dist[x], path, 11);
-            prev = x;
+            if (stock < qty) {
+                answers.push_back("NOT_ENOUGH " + to_string(stock));
+                continue;
+            }
+
+            SkuInfo& info = it->second;
+            string result;
+            long long need = qty;
+            while (need > 0) {
+                Lot& front = info.lots.front();
+                long long take = min(need, front.qty);
+                if (!result.empty()) result += ' ';
+                result += front.id + ":" + to_string(take);
+                front.qty -= take;
+                need -= take;
+                if (front.qty == 0) info.lots.pop();
+            }
+            info.total -= qty;
+            answers.push_back(result);
+
+        } else if (cmd == "STOCK") {
+            if (tokens.size() != 2 || tokens[1].size() > MAX_LEN) {
+                answers.push_back("INVALID");
+                continue;
+            }
+            auto it = warehouse.find(tokens[1]);
+            long long stock = (it == warehouse.end()) ? 0 : it->second.total;
+            answers.push_back(to_string(stock));
+
+        } else {
+            answers.push_back("INVALID");
         }
-        string out;
-        for (size_t i = 0; i < path.size() && i < 11; i++) {
-            if (i) out += ' ';
-            out += "(" + to_string(path[i] / C) + "," + to_string(path[i] % C) + ")";
-        }
-        if (best > 10) out += " ...";
-        part2[qi] = out;
     }
 
-    string res;
-    for (int i = 0; i < Q; i++) res += part1[i] + "\n";
-    for (int i = 0; i < Q; i++) res += part2[i] + "\n";
-    cout << res;
+    for (const string& s : answers) cout << s << '\n';
     return 0;
 }
