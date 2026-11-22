@@ -1,11 +1,32 @@
-# Bài tập 1: Tìm đường ngắn nhất trong kho hàng
+# Bài 2 – Nhập/xuất kho theo FIFO
 
-## Mô tả thuật toán
-- Sử dụng cấu trúc lưới 2D biểu diễn sơ đồ kho hàng.
-- Áp dụng thuật toán BFS (Breadth-First Search) để tính khoảng cách ngắn nhất giữa các điểm.
-- Dùng thuật toán hoán vị (`next_permutation`) để tìm thứ tự thăm các điểm sao cho tổng khoảng cách là nhỏ nhất.
+## Ý tưởng
+- Mỗi mã hàng (SKU) có một hàng đợi (queue) các lô; lô nhập sớm nhất nằm ở đầu hàng đợi.
+- Dùng `unordered_map` để tìm hàng đợi của SKU nhanh (trung bình O(1)).
+- Dùng `unordered_set` lưu mọi mã lô đã từng nhập để phát hiện `DUPLICATE_LOT` trong toàn kho
+  (lô đã xuất hết vẫn tính là đã dùng).
+- `EXPORT`: kiểm tra tồn kho trước; nếu không đủ in `NOT_ENOUGH <tồn>` và không xuất gì.
+  Nếu đủ thì lấy lần lượt từ lô đầu hàng đợi, lô hết thì bỏ khỏi hàng đợi.
 
-## Hướng dẫn biên dịch và chạy chương trình (Visual Studio / C++)
-1. Mở file `solution.cpp` bằng Visual Studio.
-2. Nhấn **Ctrl + F5** (hoặc chọn Debug -> Start Without Debugging) để biên dịch và chạy chương trình.
-3. Nhập dữ liệu đầu vào theo định dạng yêu cầu của đề bài.
+## Cách chạy
+Visual Studio: mở file `solution.cpp` trong project C++, nhấn Ctrl + F5, dán dữ liệu vào cửa sổ.
+
+Dòng lệnh:
+
+    g++ -O2 -std=c++17 -o solution solution.cpp
+    ./solution < tests/test_example.in
+
+## Kiểm tra với các test
+Mỗi test có file `.in` (đầu vào) và `.out` (kết quả đúng):
+
+    ./solution < tests/test_example.in | diff - tests/test_example.out
+
+| Test | Nội dung |
+|---|---|
+| test_example | Ví dụ trong đề |
+| test_fifo | Xuất qua nhiều lô, xuất đúng hết lô, xuất khi hết hàng |
+| test_invalid | Dữ liệu sai: số lượng 0, quá 10^9, có chữ, mã quá 20 ký tự, thiếu tham số, sai tên lệnh |
+
+## Độ phức tạp
+IMPORT và STOCK: O(1) trung bình. EXPORT: O(số lô bị lấy); mỗi lô chỉ bị lấy ra khỏi hàng đợi một lần
+nên tổng cho Q lệnh là O(Q).
